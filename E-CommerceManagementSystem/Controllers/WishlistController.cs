@@ -31,7 +31,7 @@ namespace E_CommerceManagementSystem.Controllers
             return Ok(result);
         }
         [Authorize]
-        [HttpDelete("productId:int")]
+        [HttpDelete("{productId:int}")]
         public async Task<ActionResult<List<WishlistItemResponseDto>>> DeleteWishListItem(int productId)
         {
             var userId = User.GetUserId();

@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>E_CommerceManagementSystem</RootNamespace>
+    <UserSecretsId>a745fd06-cfaa-4848-b098-783060e82fbb</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

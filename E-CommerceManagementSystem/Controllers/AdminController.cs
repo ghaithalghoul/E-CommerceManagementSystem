@@ -1,5 +1,6 @@
 ﻿using E_CommerceManagementSystem.Dto;
 using E_CommerceManagementSystem.Dto.Admin;
+using E_CommerceManagementSystem.Dto.Order;
 using E_CommerceManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -57,6 +58,12 @@ namespace E_CommerceManagementSystem.Controllers
         public async Task<ActionResult<PaginatedResponse<ReviewResponse>>> GetReviews(ReviewFilterRequest request)
         {
             var result = await adminService.GetReviews(request);
+            return Ok(result);
+        }
+        [HttpGet("orders")]
+        public async  Task<ActionResult<PaginatedResponse<OrderResponse>>> GetAllOrder(OrderFilterRequest request)
+        {
+            var result = await adminService.GetAllOrder(request);
             return Ok(result);
         }
         [HttpGet("dashboard")]
