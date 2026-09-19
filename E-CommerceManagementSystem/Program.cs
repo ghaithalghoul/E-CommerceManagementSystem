@@ -1,4 +1,5 @@
 using E_CommerceManagementSystem.Data;
+using E_CommerceManagementSystem.Middlewares;
 using E_CommerceManagementSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
@@ -44,7 +45,7 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -52,7 +53,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -8,11 +8,11 @@
         public string PasswordHashed { get; set; } = string.Empty;
         public string Role { get; set; } = "Customer";
         public DateTime CreatedAt { get; set; }
-        public string? RefreshToken {  get; set; }
-        public DateTime? RefreshTokenExpireTime { get; set; }
+        
         public Cart? Cart { get; set; }
         public ICollection<Order> orders { get; set; } = new List<Order>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
         public Wishlist? Wishlist { get; set; }
     }
 }

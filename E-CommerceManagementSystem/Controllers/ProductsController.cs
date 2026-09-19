@@ -61,7 +61,7 @@ namespace E_CommerceManagementSystem.Controllers
         }
         
         [HttpGet("product-review/{productId:int}")]
-        public async Task<ActionResult<PaginatedResponse<Models.Review>>> GetReviews(int productId,
+        public async Task<ActionResult<PaginatedResponse<ReviewResponseDto>>> GetReviews(int productId,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10)
         {
@@ -70,8 +70,17 @@ namespace E_CommerceManagementSystem.Controllers
             return Ok(result);
         }
         [Authorize]
+        [HttpPost("add-review")]
+        public async Task<ActionResult<ReviewResponseDto?>> AddReview(ReviewRequest request)
+        {
+            var userId = User.GetUserId();
+            var result = await productsService.AddReview(userId, request);
+            if (result is null) return BadRequest();
+            return Ok(result);
+        }
+        [Authorize]
         [HttpPut("update-review/{reviewId:int}")]
-        public async Task<ActionResult<Models.Review?>> UpdateReview( int reviewId, UpdateReviewRequest request)
+        public async Task<ActionResult<ReviewResponseDto?>> UpdateReview( int reviewId, UpdateReviewRequest request)
         {
             var userId = User.GetUserId();
             var result = await productsService.UpdateReview(userId,reviewId,  request);
@@ -80,7 +89,7 @@ namespace E_CommerceManagementSystem.Controllers
         }
         [Authorize]
         [HttpDelete("reviews/{reviewId:int}")]
-        public async Task<ActionResult<Models.Review?>> DeleteReview(int reviewId)
+        public async Task<ActionResult<ReviewResponseDto?>> DeleteReview(int reviewId)
         {
             var userId = User.GetUserId();
             var result = await productsService.DeleteReview(userId, reviewId);

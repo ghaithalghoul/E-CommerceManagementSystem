@@ -4,6 +4,7 @@ using E_CommerceManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260919151221_Token")]
+    partial class Token
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,7 +245,7 @@ namespace E_CommerceManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("RevokedAt")
+                    b.Property<DateTime>("RevokedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
@@ -306,6 +309,12 @@ namespace E_CommerceManagementSystem.Migrations
                     b.Property<string>("PasswordHashed")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RefreshTokenExpireTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Role")
                         .IsRequired()

@@ -15,10 +15,10 @@ namespace E_CommerceManagementSystem.Controllers
     {
         [Authorize]
         [HttpGet("{cartId:int}")]
-        public  async Task<ActionResult<CartResponse?>> GetCart( int id)
+        public  async Task<ActionResult<CartResponse?>> GetCart( int cartId)
         {
             var userId = User.GetUserId();
-            var result =await cartService.GetCart(userId, id);
+            var result =await cartService.GetCart(userId, cartId);
             if (result == null) return NotFound();
             return Ok(result);
         }

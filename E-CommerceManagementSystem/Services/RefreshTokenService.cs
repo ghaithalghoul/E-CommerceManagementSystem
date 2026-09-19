@@ -1,5 +1,7 @@
-﻿using E_CommerceManagementSystem.Data;
+﻿using Azure.Core;
+using E_CommerceManagementSystem.Data;
 using E_CommerceManagementSystem.Dto;
+using E_CommerceManagementSystem.Migrations;
 using E_CommerceManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -11,11 +13,18 @@ namespace E_CommerceManagementSystem.Services
     {
         public async Task<string> CreateRefreshToken(Users user)
         {
-            var refreshtoken = tokenService.GenerateRefreshToken();
-            user.RefreshToken = refreshtoken;
-            user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(7);
+            var refreshToken = tokenService.GenerateRefreshToken();
+            var refreshTokenEntity = new RefreshToken
+            {
+                HashToken = HashToken(refreshToken),
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+                UserId = user.Id
+            };
+
+            dbContext.RefreshTokens.Add(refreshTokenEntity);
             await dbContext.SaveChangesAsync();
-            return refreshtoken;
+            return refreshToken;
         }
 
         public string HashToken(string token)
@@ -29,25 +38,61 @@ namespace E_CommerceManagementSystem.Services
             return Convert.ToBase64String(hash);
         }
 
-        public async Task<string?> RefreshTokenAsync(RefreshTokenRequestDto requst)
+        public async Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request)
         {
-            var result = await ValidateRefreshToken(requst.UserId, requst.RefreshToken);
-            if (result == null) return null;
-            var newRefreshtoken = tokenService.CreateToken(result);
+            var refreshTokenEntity = await ValidateRefreshToken(
+                request.UserId,
+                request.RefreshToken
+            );
 
-            return newRefreshtoken;
+            if (refreshTokenEntity is null)
+                return null;
+
+
+            var user = refreshTokenEntity.User;
+
+
+            // Revoke old refresh token
+            refreshTokenEntity.RevokedAt = DateTime.UtcNow;
+
+
+            var newRefreshToken = await CreateRefreshToken(user);
+
+
+            return new TokenResponseDto
+            {
+                AccessToken = tokenService.CreateToken(user),
+                RefreshToken = newRefreshToken
+            };
 
 
         }
 
-        public async Task<Users?> ValidateRefreshToken(int userId, string token)
+        public async Task<RefreshToken?> ValidateRefreshToken(int userId, string token)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            if (user is null || user.RefreshToken != token || user.RefreshTokenExpireTime <= DateTime.UtcNow)
-            {
+            var hashToken = HashToken(token);
+
+
+            var refreshToken = await dbContext.RefreshTokens
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x =>
+                    x.UserId == userId &&
+                    x.HashToken == hashToken);
+
+
+            if (refreshToken is null)
                 return null;
-            }
-            return user;
+
+
+            if (refreshToken.ExpiresAt <= DateTime.UtcNow)
+                return null;
+
+
+            if (refreshToken.RevokedAt != null)
+                return null;
+
+
+            return refreshToken;
         }
     }
 }

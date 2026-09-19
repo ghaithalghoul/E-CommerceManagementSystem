@@ -6,6 +6,6 @@ namespace E_CommerceManagementSystem.Services
     {
         Task<RegisterResponseDto?> Register(RegisterRequestDto request);
         Task<TokenResponseDto?> Login(LoginRequestDto request);
-        Task<bool> Logout(int userId);
+        Task<bool> Logout(int userId, LogoutRequestDto request);
     }
 }

@@ -13,14 +13,24 @@ namespace E_CommerceManagementSystem.Services
         Task<ProductDto?> UpdateProduct(int adminId,int productId, UpdateProductRequest request);
         Task<ProductDto?> DeleteProduct(int productId);
         Task<PaginatedResponse<ProductDto>> GetProductsAsync(ProductFilterRequest request);
-        Task<Models.Review?> AddReview(int userId, ReviewRequest request);
-        Task<PaginatedResponse<Models.Review>> GetReviews(
+        Task<ReviewResponseDto?> AddReview(
+    int userId,
+    ReviewRequest request);
+
+        Task<PaginatedResponse<ReviewResponseDto>> GetReviews(
             int productId,
             int page,
             int pageSize);
-        Task<Models.Review?> UpdateReview(int userId, int reviewId, UpdateReviewRequest request);
-        Task<Models.Review?> DeleteReview(int userId, int reviewId);
-        
+
+        Task<ReviewResponseDto?> UpdateReview(
+            int userId,
+            int reviewId,
+            UpdateReviewRequest request);
+
+        Task<ReviewResponseDto?> DeleteReview(
+            int userId,
+            int reviewId);
+
 
     }
 }

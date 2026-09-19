@@ -38,10 +38,10 @@ namespace E_CommerceManagementSystem.Controllers
         }
         [Authorize]
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(LogoutRequestDto request)
         {
             var userid = User.GetUserId();
-            var result = await authService.Logout(userid);
+            var result = await authService.Logout(userid, request);
             if (result == false) return BadRequest("Somthing went wrong");
             return Ok(new {
                 message = "Logged out successfully" 

@@ -16,6 +16,8 @@ namespace E_CommerceManagementSystem.Data
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

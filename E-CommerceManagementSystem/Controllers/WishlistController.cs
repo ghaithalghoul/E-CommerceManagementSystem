@@ -1,4 +1,5 @@
-﻿using E_CommerceManagementSystem.Extensions;
+﻿using E_CommerceManagementSystem.Dto;
+using E_CommerceManagementSystem.Extensions;
 using E_CommerceManagementSystem.Migrations;
 using E_CommerceManagementSystem.Models;
 using E_CommerceManagementSystem.Services;
@@ -14,15 +15,15 @@ namespace E_CommerceManagementSystem.Controllers
     {
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<List<WishlistItem>>> GetWishList()
+        public async Task<ActionResult<List<WishlistItemResponseDto>>> GetWishList()
         {
             var userId = User.GetUserId();
             var result = await wishlistService.GetWishlistAsync(userId);
             return Ok(result);
         }
         [Authorize]
-        [HttpPost("productId:int")]
-        public async Task<ActionResult<List<WishlistItem>>> AddWishListItem(int productId)
+        [HttpPost("{productId:int}")]
+        public async Task<ActionResult<List<WishlistItemResponseDto>>> AddWishListItem(int productId)
         {
             var userId = User.GetUserId();
             var result = await wishlistService.AddWishlistItemAsync(userId,productId);
@@ -31,7 +32,7 @@ namespace E_CommerceManagementSystem.Controllers
         }
         [Authorize]
         [HttpDelete("productId:int")]
-        public async Task<ActionResult<List<WishlistItem>>> DeleteWishListItem(int productId)
+        public async Task<ActionResult<List<WishlistItemResponseDto>>> DeleteWishListItem(int productId)
         {
             var userId = User.GetUserId();
             var result = await wishlistService.DeleteWishlistItemAsync(userId, productId);

@@ -8,10 +8,10 @@ namespace E_CommerceManagementSystem.Services
     {
         Task<string> CreateRefreshToken(Users user);
 
-        Task<Users?> ValidateRefreshToken(
+        Task<RefreshToken?> ValidateRefreshToken(
             int userId,
             string token);
-        Task<string?> RefreshTokenAsync(RefreshTokenRequestDto requst);
+        Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request);
         string HashToken(string token);
     }
 }

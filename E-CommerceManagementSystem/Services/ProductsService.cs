@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_CommerceManagementSystem.Services
 {
-    public class ProductsService(AppDbContext dbContext,IAuditLogService auditLogService) : IProductsService
+    public class ProductsService(AppDbContext dbContext, IAuditLogService auditLogService) : IProductsService
     {
         public async Task<ProductDto?> AddProduct(CreateProductRequest request)
         {
@@ -32,31 +32,53 @@ namespace E_CommerceManagementSystem.Services
             };
         }
 
-        public async Task<Models.Review?> AddReview(int userId, ReviewRequest request)
+        public async Task<ReviewResponseDto?> AddReview(
+    int userId,
+    ReviewRequest request)
         {
             var hasPurchased = await dbContext.Orders
-            .AnyAsync(order =>
-                order.UserId == userId &&
-                order.OrderItems.Any(item =>
-                    item.ProductId == request.ProductId));
-            if (!hasPurchased || request.Rating < 1 || request.Rating > 5) return null;
+                .AnyAsync(order =>
+                    order.UserId == userId &&
+                    order.OrderItems.Any(item =>
+                        item.ProductId == request.ProductId));
+
+            if (!hasPurchased ||
+                request.Rating < 1 ||
+                request.Rating > 5)
+            {
+                return null;
+            }
+
             var alreadyReviewed = await dbContext.Reviews
-                    .AnyAsync(x =>
-                        x.UserId == userId &&
-                        x.ProductId == request.ProductId);
+                .AnyAsync(x =>
+                    x.UserId == userId &&
+                    x.ProductId == request.ProductId);
 
             if (alreadyReviewed)
                 return null;
-            var review = new Models.Review();
-            review.UserId = userId;
-            review.ProductId = request.ProductId;
-            review.Rating = request.Rating;
-            review.Comment = request.Comment;
-            review.CreatedAt = DateTime.UtcNow;
+
+            var review = new Models.Review
+            {
+                UserId = userId,
+                ProductId = request.ProductId,
+                Rating = request.Rating,
+                Comment = request.Comment,
+                CreatedAt = DateTime.UtcNow
+            };
+
             dbContext.Reviews.Add(review);
+
             await dbContext.SaveChangesAsync();
-            return review;
-            
+
+            return new ReviewResponseDto
+            {
+                Id = review.Id,
+                UserId = review.UserId,
+                ProductId = review.ProductId,
+                Rating = review.Rating,
+                Comment = review.Comment,
+                CreatedAt = review.CreatedAt
+            };
         }
 
         public async Task<ProductDto?> DeleteProduct(int productId)
@@ -76,13 +98,31 @@ namespace E_CommerceManagementSystem.Services
             };
         }
 
-        public async Task<Models.Review?> DeleteReview(int userId, int reviewId)
+        public async Task<ReviewResponseDto?> DeleteReview(
+                    int userId,
+                    int reviewId)
         {
-            var review = await dbContext.Reviews.FirstOrDefaultAsync(x => x.Id == reviewId && x.UserId == userId);
-            if(review == null) return null;
+            var review = await dbContext.Reviews
+                .FirstOrDefaultAsync(x =>
+                    x.Id == reviewId &&
+                    x.UserId == userId);
+
+            if (review is null)
+                return null;
+
             dbContext.Reviews.Remove(review);
+
             await dbContext.SaveChangesAsync();
-            return review;
+
+            return new ReviewResponseDto
+            {
+                Id = review.Id,
+                UserId = review.UserId,
+                ProductId = review.ProductId,
+                Rating = review.Rating,
+                Comment = review.Comment,
+                CreatedAt = review.CreatedAt
+            };
         }
 
         public async Task<List<ProductDto>> GetAllProduct()
@@ -110,8 +150,8 @@ namespace E_CommerceManagementSystem.Services
                 Price = product.Price,
                 Stock = product.stock,
                 Description = product.Description,
-                ImageUrl= product.ImageUrl,
-                CategoryId= product.CategoryId
+                ImageUrl = product.ImageUrl,
+                CategoryId = product.CategoryId
             };
         }
 
@@ -126,11 +166,11 @@ namespace E_CommerceManagementSystem.Services
             {
                 query = query.Where(x => x.Price >= request.MinPrice.Value);
             }
-            if(request.MaxPrice.HasValue)
+            if (request.MaxPrice.HasValue)
             {
                 query = query.Where(x => x.Price <= request.MaxPrice.Value);
             }
-            if(request.CategoryId.HasValue)
+            if (request.CategoryId.HasValue)
             {
                 query = query.Where(x => x.CategoryId == request.CategoryId.Value);
             }
@@ -182,7 +222,7 @@ namespace E_CommerceManagementSystem.Services
 
 
             }
-            
+
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(
                 (double)totalCount / request.PageSize);
@@ -211,10 +251,10 @@ namespace E_CommerceManagementSystem.Services
             };
         }
 
-        public async Task<PaginatedResponse<Models.Review>> GetReviews(
-            int productId,
-            int page,
-            int pageSize)
+        public async Task<PaginatedResponse<ReviewResponseDto>> GetReviews(
+    int productId,
+    int page,
+    int pageSize)
         {
             var query = dbContext.Reviews
                 .Where(x => x.ProductId == productId);
@@ -230,9 +270,18 @@ namespace E_CommerceManagementSystem.Services
                 .OrderByDescending(x => x.CreatedAt)
                 .Skip(skip)
                 .Take(pageSize)
+                .Select(x => new ReviewResponseDto
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    ProductId = x.ProductId,
+                    Rating = x.Rating,
+                    Comment = x.Comment,
+                    CreatedAt = x.CreatedAt
+                })
                 .ToListAsync();
 
-            return new PaginatedResponse<Models.Review>
+            return new PaginatedResponse<ReviewResponseDto>
             {
                 Data = reviews,
                 Page = page,
@@ -242,7 +291,7 @@ namespace E_CommerceManagementSystem.Services
             };
         }
 
-        public async Task<ProductDto?> UpdateProduct(int adminId,int productId, UpdateProductRequest request)
+        public async Task<ProductDto?> UpdateProduct(int adminId, int productId, UpdateProductRequest request)
         {
             var product = await dbContext.Products.FirstOrDefaultAsync(x => x.ProductId == productId);
             if (product == null) return null;
@@ -267,10 +316,16 @@ namespace E_CommerceManagementSystem.Services
             };
         }
 
-        public async Task<Models.Review?> UpdateReview(int userId, int reviewId, UpdateReviewRequest request)
+        public async Task<ReviewResponseDto?> UpdateReview(
+                        int userId,
+                        int reviewId,
+                        UpdateReviewRequest request)
         {
-            if (request.NewRating < 1 || request.NewRating > 5)
+            if (request.NewRating < 1 ||
+                request.NewRating > 5)
+            {
                 return null;
+            }
 
             var review = await dbContext.Reviews
                 .FirstOrDefaultAsync(x =>
@@ -285,7 +340,15 @@ namespace E_CommerceManagementSystem.Services
 
             await dbContext.SaveChangesAsync();
 
-            return review;
+            return new ReviewResponseDto
+            {
+                Id = review.Id,
+                UserId = review.UserId,
+                ProductId = review.ProductId,
+                Rating = review.Rating,
+                Comment = review.Comment,
+                CreatedAt = review.CreatedAt
+            };
         }
     }
 }

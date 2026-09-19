@@ -9,7 +9,7 @@ namespace E_CommerceManagementSystem.Dto.Order
         public decimal TotalPrice { get; set; }
         public DateTime CreatedAt { get; set; }
         public int UserId { get; set; }
-        
-       
+
+        public List<OrderItemResponseDto> Items { get; set; } = new();
     }
 }

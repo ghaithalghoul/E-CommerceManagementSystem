@@ -30,6 +30,20 @@ namespace E_CommerceManagementSystem.Services
             
             dbContext.Users.Add(user);
             await dbContext.SaveChangesAsync();
+            var cart = new Cart
+            {
+                UserId = user.Id
+            };
+
+            var wishlist = new Wishlist
+            {
+                UserId = user.Id
+            };
+
+            dbContext.Carts.Add(cart);
+            dbContext.Wishlists.Add(wishlist);
+
+            await dbContext.SaveChangesAsync();
             var auth = new AuditLogRequest();
             auth.UserId = user.Id;
             await auditLogService.CreateAsync(auth, AuditAction.Register);
@@ -49,6 +63,7 @@ namespace E_CommerceManagementSystem.Services
             var auth = new AuditLogRequest();
             auth.UserId = user.Id;
             await auditLogService.CreateAsync(auth, AuditAction.Login);
+
             return new TokenResponseDto 
             {
                 AccessToken =  tokenService.CreateToken(user),
@@ -57,14 +72,15 @@ namespace E_CommerceManagementSystem.Services
 
         }
 
-        public async Task<bool> Logout(int userId)
+        public async Task<bool> Logout(int userId, LogoutRequestDto request)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id ==  userId);
-            if (user is null) return false;
-            user.RefreshToken = null;
-            user.RefreshTokenExpireTime = null;
+            var hashtoken = refreshTokenService.HashToken(request.RefreshToken);
+            var token = await dbContext.RefreshTokens.FirstOrDefaultAsync(x => x.HashToken == hashtoken &&
+            x.RevokedAt == null);
+            if (token is null) return false;
+            token.RevokedAt = DateTime.UtcNow;
             var auth = new AuditLogRequest();
-            auth.UserId = user.Id;
+            auth.UserId = userId;
             await auditLogService.CreateAsync(auth, AuditAction.Logout);
             await dbContext.SaveChangesAsync();
             return true;

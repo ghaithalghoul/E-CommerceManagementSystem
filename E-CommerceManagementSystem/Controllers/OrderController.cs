@@ -12,31 +12,35 @@ namespace E_CommerceManagementSystem.Controllers
     [ApiController]
     public class OrderController(IOrderService orderService) : ControllerBase
     {
+        [Authorize]
         [HttpPost]
-        public async Task<ActionResult<Order>> CreateOrder()
+        public async Task<ActionResult<OrderResponse>> CreateOrder()
         {
             var userId = User.GetUserId();
             var order = await orderService.CreateOrder(userId);
             if (order == null) return BadRequest();
             return StatusCode(201, order);
         }
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<List<Order>>> GetAllOrders()
+        public async Task<ActionResult<List<OrderResponse>>> GetAllOrders()
         {
             var userId = User.GetUserId();
             var orders = await orderService.GetAllOrders(userId);
             return Ok(orders);
         }
+        [Authorize]
         [HttpGet("{orderId:int}")]
-        public async Task<ActionResult<Order>> GetOrder(int orderId)
+        public async Task<ActionResult<OrderResponse>> GetOrder(int orderId)
         {
             var userId = User.GetUserId();
             var order = await orderService.GetOrder(userId, orderId);
             if (order is null) return NotFound();
             return Ok(order);
         }
+        [Authorize]
         [HttpPut("cancel/{orderId:int}")]
-        public async Task<ActionResult<List<Order>>> CancelOrder(int orderId)
+        public async Task<ActionResult<List<OrderResponse>>> CancelOrder(int orderId)
         {
             var userId = User.GetUserId();
             var order = await orderService.CancelOrder(userId, orderId);
@@ -45,7 +49,7 @@ namespace E_CommerceManagementSystem.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPut("update-status")]
-        public async Task<ActionResult<Order>> UpdateOrderStatus( UpdateOrderRequest request)
+        public async Task<ActionResult<OrderResponse>> UpdateOrderStatus( UpdateOrderRequest request)
         {
             var adminId = User.GetUserId();
             var result = await orderService.UpdateOrderStatus(adminId,request);
