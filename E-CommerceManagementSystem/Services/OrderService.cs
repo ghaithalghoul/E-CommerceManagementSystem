@@ -6,77 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_CommerceManagementSystem.Services
 {
-    public class OrderService(AppDbContext context,IAuditLogService auditLogService) : IOrderService
+    public class OrderService(
+        AppDbContext context,
+        IAuditLogService auditLogService) : IOrderService
     {
-        public async Task<OrderResponse?> CancelOrder(int userId, int orderId)
-        {
-            await using var transaction = await context.Database.BeginTransactionAsync();
-
-            try
-            {
-                var order = await context.Orders
-                    .Include(x => x.OrderItems)
-                    .FirstOrDefaultAsync(x =>
-                        x.Id == orderId &&
-                        x.UserId == userId);
-
-                if (order is null)
-                    return null;
-
-                if (order.OrderStatus != OrderStatus.Processing &&
-                    order.OrderStatus != OrderStatus.Pending)
-                {
-                    return null;
-                }
-
-                var productIds = order.OrderItems
-                    .Select(x => x.ProductId)
-                    .Distinct()
-                    .ToList();
-
-                var products = await context.Products
-                    .Where(x => productIds.Contains(x.ProductId))
-                    .ToListAsync();
-
-                var productsDictionary = products
-                    .ToDictionary(x => x.ProductId);
-
-                foreach (var item in order.OrderItems)
-                {
-                    if (!productsDictionary.TryGetValue(item.ProductId, out var product))
-                        return null;
-
-                    product.stock += item.Quantity;
-                }
-
-                order.OrderStatus = OrderStatus.Cancelled;
-
-                await context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return new OrderResponse
-                {
-                    Id = order.Id,
-                    UserId = order.UserId,
-                    OrderStatus = order.OrderStatus,
-                    TotalPrice = order.TotalPrice,
-                    CreatedAt = order.CreatedAt,
-                    Items = order.OrderItems.Select(x => new OrderItemResponseDto
-                    {
-                        ProductId = x.ProductId,
-                        Quantity = x.Quantity,
-                        UnitPrice = x.UnitPrice,
-                        Total = x.UnitPrice * x.Quantity
-                    }).ToList()
-                };
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        }
-
         public async Task<OrderResponse?> CreateOrder(int userId)
         {
             await using var transaction =
@@ -120,8 +53,12 @@ namespace E_CommerceManagementSystem.Services
 
                 foreach (var item in cartItems)
                 {
-                    if (!productsDictionary.TryGetValue(item.ProductId, out var product))
+                    if (!productsDictionary.TryGetValue(
+                            item.ProductId,
+                            out var product))
+                    {
                         return null;
+                    }
 
                     if (product.stock < item.Quantity)
                         return null;
@@ -148,21 +85,7 @@ namespace E_CommerceManagementSystem.Services
                 await context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return new OrderResponse
-                {
-                    Id = order.Id,
-                    UserId = order.UserId,
-                    OrderStatus = order.OrderStatus,
-                    TotalPrice = order.TotalPrice,
-                    CreatedAt = order.CreatedAt,
-                    Items = order.OrderItems.Select(x => new OrderItemResponseDto
-                    {
-                        ProductId = x.ProductId,
-                        Quantity = x.Quantity,
-                        UnitPrice = x.UnitPrice,
-                        Total = x.UnitPrice * x.Quantity
-                    }).ToList()
-                };
+                return await GetOrderResponse(userId, order.Id);
             }
             catch
             {
@@ -175,7 +98,6 @@ namespace E_CommerceManagementSystem.Services
         {
             return await context.Orders
                 .Where(x => x.UserId == userId)
-                .Include(x => x.OrderItems)
                 .Select(x => new OrderResponse
                 {
                     Id = x.Id,
@@ -183,65 +105,136 @@ namespace E_CommerceManagementSystem.Services
                     OrderStatus = x.OrderStatus,
                     TotalPrice = x.TotalPrice,
                     CreatedAt = x.CreatedAt,
-                    Items = x.OrderItems.Select(item => new OrderItemResponseDto
-                    {
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity,
-                        UnitPrice = item.UnitPrice,
-                        Total = item.UnitPrice * item.Quantity
-                    }).ToList()
+
+                    Items = x.OrderItems
+                        .Select(item => new OrderItemResponseDto
+                        {
+                            ProductId = item.ProductId,
+                            ProductName = item.Product.Name,
+                            ImageUrl = item.Product.ImageUrl,
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice,
+                            Total = item.UnitPrice * item.Quantity
+                        })
+                        .ToList()
                 })
                 .ToListAsync();
         }
 
-        public async Task<OrderResponse?> GetOrder(int userId, int orderId)
+        public async Task<OrderResponse?> GetOrder(
+            int userId,
+            int orderId)
         {
-            var order = await context.Orders
-                .Include(x => x.OrderItems)
-                .FirstOrDefaultAsync(x =>
+            return await context.Orders
+                .Where(x =>
                     x.Id == orderId &&
-                    x.UserId == userId);
-
-            if (order is null)
-                return null;
-
-            return new OrderResponse
-            {
-                Id = order.Id,
-                UserId = order.UserId,
-                OrderStatus = order.OrderStatus,
-                TotalPrice = order.TotalPrice,
-                CreatedAt = order.CreatedAt,
-                Items = order.OrderItems.Select(x => new OrderItemResponseDto
+                    x.UserId == userId)
+                .Select(x => new OrderResponse
                 {
-                    ProductId = x.ProductId,
-                    Quantity = x.Quantity,
-                    UnitPrice = x.UnitPrice,
-                    Total = x.UnitPrice * x.Quantity
-                }).ToList()
-            };
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    OrderStatus = x.OrderStatus,
+                    TotalPrice = x.TotalPrice,
+                    CreatedAt = x.CreatedAt,
+
+                    Items = x.OrderItems
+                        .Select(item => new OrderItemResponseDto
+                        {
+                            ProductId = item.ProductId,
+                            ProductName = item.Product.Name,
+                            ImageUrl = item.Product.ImageUrl,
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice,
+                            Total = item.UnitPrice * item.Quantity
+                        })
+                        .ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<OrderResponse?> CancelOrder(
+            int userId,
+            int orderId)
+        {
+            await using var transaction =
+                await context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var order = await context.Orders
+                    .Include(x => x.OrderItems)
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == orderId &&
+                        x.UserId == userId);
+
+                if (order is null)
+                    return null;
+
+                if (order.OrderStatus != OrderStatus.Processing &&
+                    order.OrderStatus != OrderStatus.Pending)
+                {
+                    return null;
+                }
+
+                var productIds = order.OrderItems
+                    .Select(x => x.ProductId)
+                    .Distinct()
+                    .ToList();
+
+                var products = await context.Products
+                    .Where(x => productIds.Contains(x.ProductId))
+                    .ToListAsync();
+
+                var productsDictionary = products
+                    .ToDictionary(x => x.ProductId);
+
+                foreach (var item in order.OrderItems)
+                {
+                    if (!productsDictionary.TryGetValue(
+                            item.ProductId,
+                            out var product))
+                    {
+                        return null;
+                    }
+
+                    product.stock += item.Quantity;
+                }
+
+                order.OrderStatus = OrderStatus.Cancelled;
+
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return await GetOrderResponse(userId, orderId);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<OrderResponse?> UpdateOrderStatus(
             int adminId,
             UpdateOrderRequest request)
-                {
+        {
             var order = await context.Orders
-                .Include(x => x.OrderItems)
                 .FirstOrDefaultAsync(x => x.Id == request.OrderId);
 
-            if (order is null || order.OrderStatus == request.OrderStatus)
+            if (order is null ||
+                order.OrderStatus == request.OrderStatus)
+            {
                 return null;
+            }
 
             var auth = new AuditLogRequest
             {
                 UserId = adminId,
-                OldValue = order.OrderStatus.ToString()
+                OldValue = order.OrderStatus.ToString(),
+                NewValue = request.OrderStatus.ToString()
             };
 
             order.OrderStatus = request.OrderStatus;
-
-            auth.NewValue = order.OrderStatus.ToString();
 
             await auditLogService.CreateAsync(
                 auth,
@@ -249,21 +242,40 @@ namespace E_CommerceManagementSystem.Services
 
             await context.SaveChangesAsync();
 
-            return new OrderResponse
-            {
-                Id = order.Id,
-                UserId = order.UserId,
-                OrderStatus = order.OrderStatus,
-                TotalPrice = order.TotalPrice,
-                CreatedAt = order.CreatedAt,
-                Items = order.OrderItems.Select(x => new OrderItemResponseDto
+            return await GetOrderResponse(
+                order.UserId,
+                order.Id);
+        }
+
+        private async Task<OrderResponse?> GetOrderResponse(
+            int userId,
+            int orderId)
+        {
+            return await context.Orders
+                .Where(x =>
+                    x.Id == orderId &&
+                    x.UserId == userId)
+                .Select(x => new OrderResponse
                 {
-                    ProductId = x.ProductId,
-                    Quantity = x.Quantity,
-                    UnitPrice = x.UnitPrice,
-                    Total = x.UnitPrice * x.Quantity
-                }).ToList()
-            };
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    OrderStatus = x.OrderStatus,
+                    TotalPrice = x.TotalPrice,
+                    CreatedAt = x.CreatedAt,
+
+                    Items = x.OrderItems
+                        .Select(item => new OrderItemResponseDto
+                        {
+                            ProductId = item.ProductId,
+                            ProductName = item.Product.Name,
+                            ImageUrl = item.Product.ImageUrl,
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice,
+                            Total = item.UnitPrice * item.Quantity
+                        })
+                        .ToList()
+                })
+                .FirstOrDefaultAsync();
         }
     }
 }

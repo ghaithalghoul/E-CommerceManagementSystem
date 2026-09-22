@@ -8,6 +8,7 @@ namespace E_CommerceManagementSystem.Services
 {
     public class CartService(AppDbContext context) : ICartService
     {
+
         public async Task<CartItemResponseDto?> AddCartIteme(int userId, AddCartItemRequest request)
         {
             var cart = await context.Carts
@@ -32,6 +33,8 @@ namespace E_CommerceManagementSystem.Services
                 {
                     Id = cartitem.Id,
                     ProductId = cartitem.ProductId,
+                    ProductName = product.Name,
+                    ImageUrl = product.ImageUrl,
                     Quantity = cartitem.Quantity,
                     Price = cartitem.Price,
                     Total = cartitem.Price * cartitem.Quantity
@@ -43,6 +46,8 @@ namespace E_CommerceManagementSystem.Services
             {
                 Id = existitem.Id,
                 ProductId = existitem.ProductId,
+                ProductName = product.Name,
+                ImageUrl = product.ImageUrl,
                 Quantity = existitem.Quantity,
                 Price = existitem.Price,
                 Total = existitem.Price * existitem.Quantity
@@ -110,31 +115,32 @@ namespace E_CommerceManagementSystem.Services
             };
         }
 
-        public async Task<CartResponse?> GetCart(int userId, int id)
+        public async Task<CartResponse?> GetCart(int userId)
         {
             var cart = await context.Carts
-                  .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
+                  .FirstOrDefaultAsync(x =>  x.UserId == userId);
 
             if (cart == null)
                 return null;
 
             var cartItems = await context.CartItems
-                 .Where(x => x.CartId == id)
+                .Where(x => x.CartId == cart.Id)
                 .Select(x => new CartItemResponseDto
                 {
                     Id = x.Id,
                     ProductId = x.ProductId,
+                    ProductName = x.Product.Name,
+                    ImageUrl = x.Product.ImageUrl,
                     Quantity = x.Quantity,
                     Price = x.Price,
                     Total = x.Price * x.Quantity
-                })
-                .ToListAsync();
+                }).ToListAsync();
 
             var total = cartItems.Sum(x => x.Price * x.Quantity);
 
             return new CartResponse
             {
-                CartId = id,
+                CartId = cart.Id,
                 Items = cartItems,
                 Total = total
             };

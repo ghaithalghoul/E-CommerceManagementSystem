@@ -14,11 +14,11 @@ namespace E_CommerceManagementSystem.Controllers
     public class CartController(ICartService cartService) : ControllerBase
     {
         [Authorize]
-        [HttpGet("{cartId:int}")]
-        public  async Task<ActionResult<CartResponse?>> GetCart( int cartId)
+        [HttpGet]
+        public  async Task<ActionResult<CartResponse?>> GetCart( )
         {
             var userId = User.GetUserId();
-            var result =await cartService.GetCart(userId, cartId);
+            var result =await cartService.GetCart(userId);
             if (result == null) return NotFound();
             return Ok(result);
         }

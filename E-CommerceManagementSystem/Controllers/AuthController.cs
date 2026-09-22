@@ -37,6 +37,19 @@ namespace E_CommerceManagementSystem.Controllers
             return Ok(result);
         }
         [Authorize]
+        [HttpGet("me")]
+        public async Task<ActionResult<UserProfileResponseDto>> GetProfile()
+        {
+            var userId = User.GetUserId();
+
+            var user = await authService.GetProfile(userId);
+
+            if (user is null)
+                return NotFound();
+
+            return Ok(user);
+        }
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(LogoutRequestDto request)
         {

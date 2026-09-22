@@ -6,6 +6,7 @@ namespace E_CommerceManagementSystem.Services
     {
         Task<RegisterResponseDto?> Register(RegisterRequestDto request);
         Task<TokenResponseDto?> Login(LoginRequestDto request);
+        Task<UserProfileResponseDto?> GetProfile(int userId);
         Task<bool> Logout(int userId, LogoutRequestDto request);
     }
 }

@@ -56,7 +56,7 @@ namespace E_CommerceManagementSystem.Services
         
         public async Task<TokenResponseDto?> Login(LoginRequestDto request)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName || x.Email == request.Email);
+            var user = await dbContext.Users.FirstOrDefaultAsync(x => x.UserName == request.UsernameOrEmail || x.Email == request.UsernameOrEmail);
             if (user == null) return null;
             var result = new PasswordHasher<Users>().VerifyHashedPassword(user, user.PasswordHashed, request.Password);
             if (result == PasswordVerificationResult.Failed) return null;
@@ -71,7 +71,18 @@ namespace E_CommerceManagementSystem.Services
             };
 
         }
-
+        public async Task<UserProfileResponseDto?> GetProfile(int userId)
+        {
+            return await dbContext.Users
+                .Where(x => x.Id == userId)
+                .Select(x => new UserProfileResponseDto
+                {
+                    Id = x.Id,
+                    UserName = x.UserName,
+                    Email = x.Email
+                })
+                .FirstOrDefaultAsync();
+        }
         public async Task<bool> Logout(int userId, LogoutRequestDto request)
         {
             var hashtoken = refreshTokenService.HashToken(request.RefreshToken);

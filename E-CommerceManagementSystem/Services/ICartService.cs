@@ -6,7 +6,7 @@ namespace E_CommerceManagementSystem.Services
 {
     public interface ICartService
     {
-        Task<CartResponse?> GetCart(int userId,int id);
+        Task<CartResponse?> GetCart(int userId);
         Task<CartItemResponseDto?> AddCartIteme(int userId,AddCartItemRequest request);
         Task<CartItemResponseDto?> UpdateCartItme(int userId, UpdateCartItmeRequest request, int cartitemId);
         Task<CartItemResponseDto?> DeleteCartItem(int id ,int userId);
