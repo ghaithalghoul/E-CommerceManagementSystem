@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                E-Commerce
+            </a>
+
+            <ul class="nav-links">
+                <li>
+                    <a href="index.html">
+                        <i class="fa-solid fa-house"></i>
+                        Home</a>
+                </li>
+                <li>
+                    <a href="pages/products.html">
+                        <i class="fa-solid fa-box"></i>
+                        Products</a>
+                </li>
+                <li>
+                    <a href="pages/cart.html">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Cart</a>
+                </li>
+                <li>
+                    <a href="pages/wishlist.html">
+                        <i class="fa-solid fa-heart"></i>
+                        Wishlist</a>
+                </li>
+                <li>
+                    <a href="pages/orders.html">
+                        <i class="fa-solid fa-house"></i>
+                        Orders</a>
+                </li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="pages/login.html">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        Login</a>
+                    <a href="pages/register.html">
+                        <i class="fa-solid fa-user-plus"></i>
+                        Register</a>
+                </div>
+                <div class="profile">
+                    <a href="pages/profile.html">Profile</a>
+                </div>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>
+                  Welcome to Our Store  
+                </h1>
+                <p>
+                Discover our products and find what you need.
+                </p>
+                <a href="pages/products.html" class="btn">
+                    Shop Now
+                </a>
+            </div>
+        </section>
+        <section class="categories">
+            <h2>Categories</h2>
+            <div id="categories-container">
+                
+            </div>
+        </section>
+        <section class="featured-products">
+            <h2>Featured Products</h2>
+            <div id="products-container">
+
+                
+
+            </div>
+        </section>
+        <section class="about">
+
+            <h2>About Our Store</h2>
+
+            <p>
+                We provide quality products with a simple
+                and convenient shopping experience.
+            </p>
+
+        </section>
+    </main>
+    <footer>
+
+        <p>
+            &copy; 2026 E-Commerce Store. All rights reserved.
+        </p>
+
+    </footer>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/products.js"></script>
+    <script type="module" src="js/categories.js"></script>
+    
+</body>
+</html>

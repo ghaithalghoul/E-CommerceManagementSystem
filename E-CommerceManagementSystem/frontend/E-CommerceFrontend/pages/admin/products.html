@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Products Management</title>
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/navbar.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+</head>
+
+<body>
+
+<header>
+    <nav>
+        <a href="../../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="products.html">Products</a>
+        <a href="categories.html">Categories</a>
+        <a href="orders.html">Orders</a>
+        <a href="users.html">Users</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="audit-logs.html">Audit Logs</a>
+    </nav>
+</header>
+
+<main class="admin-container">
+
+    <section class="admin-header">
+
+        <div>
+            <h1>Products Management</h1>
+            <p>Manage your store products</p>
+        </div>
+
+        <button id="add-product">
+            Add Product
+        </button>
+
+    </section>
+
+    <section id="product-form-container" class="admin-form-container hidden">
+
+        <h2 id="form-title">Add Product</h2>
+
+        <form id="product-form">
+
+            <input
+                type="hidden"
+                id="product-id"
+            >
+
+            <div class="form-group">
+
+                <label for="product-name">
+                    Name
+                </label>
+
+                <input
+                    type="text"
+                    id="product-name"
+                    required
+                    minlength="3"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="product-description">
+                    Description
+                </label>
+
+                <textarea
+                    id="product-description"
+                    required
+                ></textarea>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="product-price">
+                    Price
+                </label>
+
+                <input
+                    type="number"
+                    id="product-price"
+                    min="0.01"
+                    step="0.01"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="product-stock">
+                    Stock
+                </label>
+
+                <input
+                    type="number"
+                    id="product-stock"
+                    min="0"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="product-image">
+                    Image URL
+                </label>
+
+                <input
+                    type="text"
+                    id="product-image"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="product-category">
+                    Category ID
+                </label>
+
+                <input
+                    type="number"
+                    id="product-category"
+                    min="1"
+                    required
+                >
+
+            </div>
+
+            <div class="form-actions">
+
+                <button type="submit">
+                    Save Product
+                </button>
+
+                <button
+                    type="button"
+                    id="cancel-form"
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+    <section class="admin-table-container">
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="products-table"></tbody>
+
+        </table>
+
+    </section>
+
+    <div class="pagination">
+
+        <button id="previous-page">
+            Previous
+        </button>
+
+        <span id="page-number">
+            1
+        </span>
+
+        <button id="next-page">
+            Next
+        </button>
+
+    </div>
+
+</main>
+
+<script
+    type="module"
+    src="../../js/admin-products.js">
+</script>
+
+</body>
+</html>

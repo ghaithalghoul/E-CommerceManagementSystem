@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Orders</title>
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/navbar.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <nav>
+
+        <a href="../../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="products.html">Products</a>
+        <a href="categories.html">Categories</a>
+        <a href="orders.html">Orders</a>
+        <a href="users.html">Users</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="audit-logs.html">Audit Logs</a>
+
+    </nav>
+
+</header>
+
+<main class="admin-container">
+
+    <section class="admin-header">
+
+        <h1>Orders Management</h1>
+
+        <p>Manage customer orders</p>
+
+    </section>
+
+    <section class="admin-table-container">
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>User ID</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="orders-table"></tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+<script type="module" src="../../js/admin-orders.js"></script>
+
+</body>
+</html>

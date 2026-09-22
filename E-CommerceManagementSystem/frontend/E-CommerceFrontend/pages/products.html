@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/Products.css">
+
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                E-Commerce
+            </a>
+
+            <ul class="nav-links">
+                <li>
+                    <a href="index.html">
+                        <i class="fa-solid fa-house"></i>
+                        Home</a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fa-solid fa-box"></i>
+                        Products</a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Cart</a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fa-solid fa-heart"></i>
+                        Wishlist</a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fa-solid fa-house"></i>
+                        Orders</a>
+                </li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="pages/login.html">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        Login</a>
+                    <a href="pages/register.html">
+                        <i class="fa-solid fa-user-plus"></i>
+                        Register</a>
+                </div>
+                <div class="profile">
+                    <img id="profile-img" src="" alt="">
+                    <p id="profile-text"></p>
+                </div>
+        </nav>
+    </header>
+    <main>
+        <section class="products-header">
+    <h1>Our Products</h1>
+    <p>Discover products that suit your needs.</p>
+        </section>
+        <div class="products-toolbar">
+
+    <input
+        type="search"
+        id="searchInput"
+        placeholder="Search products..."
+    >
+
+    <select id="sortProducts">
+        <option value="">Sort By</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+        <option value="name">Name</option>
+    </select>
+
+        </div>
+        <aside class="filters">
+
+    <h2>Filters</h2>
+
+    <h3>Category</h3>
+
+    <label>
+        <input type="checkbox">
+        Electronics
+    </label>
+
+    <label>
+        <input type="checkbox">
+        Clothing
+    </label>
+
+    <label>
+        <input type="checkbox">
+        Accessories
+    </label>
+
+    <h3>Price</h3>
+
+    <input type="number" placeholder="Min price">
+    <input type="number" placeholder="Max price">
+
+    <button>Apply Filters</button>
+
+</aside>
+<div class="products-container" id="productsContainer"></div>
+    </main>
+    <div class="pagination">
+    <button>Previous</button>
+    <button class="active">1</button>
+    <button>2</button>
+    <button>3</button>
+    <button>Next</button>
+</div>
+<script type="module" src="../js/products-page.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Profile</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/profile.css">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="products.html">Products</a>
+            <a href="cart.html">Cart</a>
+            <a href="orders.html">Orders</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="profile-section">
+
+            <div class="profile-card">
+
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        👤
+                    </div>
+
+                    <h1>My Profile</h1>
+                </div>
+
+                <div class="profile-info">
+
+                    <div class="profile-row">
+                        <span>Username</span>
+                        <strong id="username"></strong>
+                    </div>
+
+                    <div class="profile-row">
+                        <span>Email</span>
+                        <strong id="email"></strong>
+                    </div>
+
+                    <div class="profile-row">
+                        <span>Role</span>
+                        <strong id="role"></strong>
+                    </div>
+
+                </div>
+
+                <div class="profile-actions">
+
+                    <button id="edit-profile">
+                        Edit Profile
+                    </button>
+
+                    <button id="change-password">
+                        Change Password
+                    </button>
+
+                    <button id="logout">
+                        Logout
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script type="module" src="../js/profile.js"></script>
+
+</body>
+</html>

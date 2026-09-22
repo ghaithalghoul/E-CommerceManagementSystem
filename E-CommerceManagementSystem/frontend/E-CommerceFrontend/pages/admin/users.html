@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Users</title>
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/navbar.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+</head>
+
+<body>
+
+<header>
+    <nav>
+        <a href="../../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="products.html">Products</a>
+        <a href="categories.html">Categories</a>
+        <a href="orders.html">Orders</a>
+        <a href="users.html">Users</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="audit-logs.html">Audit Logs</a>
+    </nav>
+</header>
+
+<main class="admin-container">
+
+    <section class="admin-header">
+        <h1>Users Management</h1>
+        <p>Manage registered users</p>
+    </section>
+
+    <section class="admin-table-container">
+
+        <table class="admin-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="users-table"></tbody>
+
+        </table>
+
+    </section>
+
+    <div class="pagination">
+
+        <button id="previous-page">
+            Previous
+        </button>
+
+        <span id="page-number">1</span>
+
+        <button id="next-page">
+            Next
+        </button>
+
+    </div>
+
+</main>
+
+<script type="module" src="../../js/admin-users.js"></script>
+
+</body>
+</html>

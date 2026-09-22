@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Audit Logs</title>
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/navbar.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <nav>
+
+        <a href="../../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="products.html">Products</a>
+        <a href="categories.html">Categories</a>
+        <a href="orders.html">Orders</a>
+        <a href="users.html">Users</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="audit-logs.html">Audit Logs</a>
+
+    </nav>
+
+</header>
+
+<main class="admin-container">
+
+    <section class="admin-header">
+
+        <h1>Audit Logs</h1>
+
+        <p>System activity history</p>
+
+    </section>
+
+    <section class="admin-table-container">
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Date</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="audit-table"></tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+<script type="module" src="../../js/admin-audit.js"></script>
+
+</body>
+</html>
